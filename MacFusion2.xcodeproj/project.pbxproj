@@ -1178,6 +1178,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D4DB42090D3E863200C99914 /* Build configuration list for PBXNativeTarget "MacfusionMain" */;
 			buildPhases = (
+				CEDDD3EF28B5CE2D00BBD0AB /* ShellScript */,
 				D4DB42000D3E863100C99914 /* Resources */,
 				D4DB42010D3E863100C99914 /* Sources */,
 				D4DB42020D3E863100C99914 /* Frameworks */,
@@ -1381,6 +1382,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /usr/bin/perl;
 			shellScript = "# Script found in http://rossfranklin.blogspot.mx/2012/07/automatically-add-git-hash-to-infoplist.html\n# Wrote by Ross Franklin\n# Minor modifications by Yoshiki Vazquez Baeza\n\nuse strict;\nuse warnings;\n\ndie \"$0: Must be run from Xcode\" unless $ENV{\"BUILT_PRODUCTS_DIR\"};\n\nmy $FH;\nmy $output;\n\n# SHA hash (should only return the first 7 characters of the hash) :\nopen $FH, \"xcrun git rev-parse --short HEAD|\" or die;\n$output = <$FH>;\nclose($FH);\n\nchomp( $output );\nmy $gitSHA = $output;\n\n# clean state :\n\n$output = `xcrun git status`;\n\nmy $gitStatus;\nif ( index( $output, \"nothing to commit (working directory clean)\" ) != -1 ) {\n    $gitStatus = \"clean\";\n} else {\n    $gitStatus = \"dirty\";\n}\n\nprint \"gitSHA : $gitSHA\\n\";\nprint \"gitStatus : $gitStatus\";\n\n# Update Info.plist in build product. Use defaults command\n#my $INFO = \"$ENV{BUILT_PRODUCTS_DIR}/$ENV{WRAPPER_NAME}/Info\"; #iOS\nmy $INFO = \"$ENV{BUILT_PRODUCTS_DIR}/$ENV{WRAPPER_NAME}/Contents/Info\"; #OSX\n\nmy @defaults = ( 'defaults', 'write', $INFO, 'GitSHA', \"$gitSHA\" );\nsystem( @defaults );\n\n@defaults = ( 'defaults', 'write', $INFO, 'GitStatus', \"$gitStatus\" );\nsystem( @defaults );";
+		};
+		CEDDD3EF28B5CE2D00BBD0AB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd Sparkle\nxcodebuild -scheme Sparkle -configuration Release CONFIGURATION_BUILD_DIR=./build clean build\ncp -a ./build/Sparkle.framework ../\n";
 		};
 		D41E209E0D886B6600F46F50 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
