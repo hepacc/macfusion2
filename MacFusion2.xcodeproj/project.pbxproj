@@ -129,7 +129,6 @@
 		5029717F16562E1F007676B8 /* macfusionAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5029716A165628C5007676B8 /* macfusionAgent.m */; };
 		50BC2B61161837D1007E13BD /* off.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BC2B60161837D1007E13BD /* off.png */; };
 		50BC2B6416183A1B007E13BD /* on.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BC2B6316183A1B007E13BD /* on.png */; };
-		50F1E99016179E2300F94F9D /* sshfs-static-lions in Resources */ = {isa = PBXBuildFile; fileRef = 50F1E98D16179E2300F94F9D /* sshfs-static-lions */; };
 		D40235AE0D7E0176000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D402372E0D7E029E000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D40B04800D8C5EC30005F448 /* MGActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D40B047F0D8C5EC30005F448 /* MGActionButton.m */; };
@@ -1166,6 +1165,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D4B14BBA0CE03CC4003195A3 /* Build configuration list for PBXNativeTarget "sshfs" */;
 			buildPhases = (
+				CED8BB9828B64E5100714CD2 /* ShellScript */,
 				D4B14BB20CE03CC3003195A3 /* Resources */,
 				D4B14BB30CE03CC3003195A3 /* Sources */,
 				D4B14BB40CE03CC3003195A3 /* Frameworks */,
@@ -1229,6 +1229,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D4E6D80D0D9372640022763F /* Build configuration list for PBXNativeTarget "ftpfs" */;
 			buildPhases = (
+				CED8BB9928B64E7000714CD2 /* ShellScript */,
 				D4E6D8050D9372640022763F /* Resources */,
 				D4E6D8060D9372640022763F /* Sources */,
 				D4E6D8070D9372640022763F /* Frameworks */,
@@ -1362,7 +1363,6 @@
 				D4656C8E0D6FD6DC00DE2208 /* sshfs.png in Resources */,
 				D41316320D7F740400F55B9B /* sshfsAdvanced.xib in Resources */,
 				D41E17DF0D86040B00F46F50 /* new_sshfs_askpass in Resources */,
-				50F1E99016179E2300F94F9D /* sshfs-static-lions in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1417,6 +1417,40 @@
 			shellPath = /bin/bash;
 			shellScript = "INFOPLIST=\"Resources/InfoPlist.h\"\nVERSION_MAY_CONTAIN_CHARS=1\nSEP=\"_\"\n\nif [ -e /opt/local/bin/git ]\nthen\nGIT=/opt/local/bin/git\nelse\nGIT=`which git`\nfi\n\n# CFBundleShortVersionString    x.y[.z]\n# CFBundleVersion               x.y.z-githash\n\n#Effectively, LS expects the following format: nnnnn[.nn[.nn]][X] where n is a digit 0-9,\n#square brackets indicate optional components, and X is any string not starting with a digit.\n#X is ignored when present.\n\ngithash=`$GIT log -1 --pretty=oneline --abbrev-commit |cut -c1-7`\nrevision=`$GIT log --oneline | wc -l |tr -d [[:space:]]`\n\n# if no tag, set x.y to 0.0\nif [ `$GIT describe --long 2>&1 |cut -c1-5` == \"fatal\" ]\nthen\nversion=0.0\ninternal_version=0.0.0${SEP}$githash\nelse\n# get tag and long tag name (w/o the githash)\nTAG=`$GIT describe --tags`\nTAGLONG=`$GIT describe --tags --long |sed \"s/-g${githash}//\"`\n\n# remove leading characters\nTAG=`echo $TAG |sed 's/[a-zA-Z]*//'`\nTAGLONG=`echo $TAGLONG |sed 's/[a-zA-Z]*//'`\n\n# get the number of commits since last tag\nTMP1=`expr \"$TAGLONG\" : '.*\\(-[0-9]*\\)'`\n\nif [ \"$TMP1\" == \"0\" ]\nthen\ncommits=0\nelse\ncommits=`echo $TMP1 |cut -c2-`\nfi\n\nif [ \"$VERSION_MAY_CONTAIN_CHARS\" == \"1\" ]\nthen\n# clean tag: remove number of commits and hash (if present), replace consecutive . with one ., remove trailing .\nTAG=`echo $TAG | sed 's/\\([0-9\\.]*\\)-[0-9]*-g[0-9a-f]\\{7\\}/\\1/' | sed 's/[\\.]\\{2,\\}/\\./g' | sed 's/\\.*$//'`\nelse\n# clean tag: remove anything after the version, replace consecutive . with one ., remove trailing .\nTAG=`echo $TAG | sed 's/\\([0-9\\.]*\\).*/\\1/' | sed 's/[\\.]\\{2,\\}/\\./g' | sed 's/\\.*$//'`\nfi\n# create version and internal_version\nversion=$TAG\n\nif [ \"$commits\" != \"0\" ] # if no commits since tagged, omit the zero in version\nthen\nversion=${TAG}.${commits}\nfi\n\ninternal_version=${TAG}.${commits}${SEP}${githash}\nfi\n\nif [ \"$1\" == \"-d\" ]\nthen\necho \"VERSION_INFO         : $version\"\necho \"INTERNAL_VERSION_INFO: $internal_version\"\necho \"GIT_HASH_INFO        : $githash\"\necho \"REVISION_INFO        : $revision\"\nexit\nfi\n\necho \"#define VERSION_INFO $version\" > $INFOPLIST\necho \"#define INTERNAL_VERSION_INFO $internal_version\" >> $INFOPLIST\necho \"#define GIT_HASH_INFO $githash\" >> $INFOPLIST\necho \"#define REVISION_INFO $revision\" >> $INFOPLIST\necho \"\" >> $INFOPLIST\necho \"#define VERSION \\\"$version\\\"\" >> $INFOPLIST\necho \"#define INTERNAL_VERSION \\\"$internal_version\\\"\" >> $INFOPLIST\necho \"#define GIT_HASH \\\"$githash\\\"\" >> $INFOPLIST\necho \"#define REVISION \\\"$revision\\\"\" >> $INFOPLIST\n";
 		};
+		CED8BB9828B64E5100714CD2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd sshfs-2.10\n./configure\nmake -j 10\ncp -a sshfs ../SSHFS/sshfs-static\n\n";
+		};
+		CED8BB9928B64E7000714CD2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd curlftpfs\n./configure\nmake -j 10\ncp -a curlftpfs ../FTPFS/curlftpfs-static\n\n";
+		};
 		CEDDD3EF28B5CE2D00BBD0AB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1432,7 +1466,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd Sparkle\nxcodebuild -scheme Sparkle -configuration Release CONFIGURATION_BUILD_DIR=./build clean build\ncp -a ./build/Sparkle.framework ../\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nrm -rf Sparkle.framework\ncd Sparkle\nxcodebuild -scheme Sparkle -configuration Release CONFIGURATION_BUILD_DIR=./build clean build\ncp -a ./build/Sparkle.framework ../\n";
 		};
 		D41E209E0D886B6600F46F50 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1734,7 +1768,7 @@
 				INFOPLIST_PREPROCESS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = Release;
 		};
@@ -1827,7 +1861,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2.MFCore;
 				PRODUCT_NAME = MFCore;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = Release;
 		};
@@ -1857,7 +1891,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = "Release-Signed";
 		};
@@ -1886,7 +1920,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2.MFCore;
 				PRODUCT_NAME = MFCore;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = "Release-Signed";
 		};
@@ -2073,7 +2107,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2;
 				PRODUCT_NAME = Macfusion;
 				SDKROOT = macosx;
-				VALID_ARCHS = "x86_64 i386";
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Release-Signed";
@@ -2125,7 +2158,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = "Debug-Signed";
 		};
@@ -2154,7 +2187,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2.MFCore;
 				PRODUCT_NAME = MFCore;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = "Debug-Signed";
 		};
@@ -2341,7 +2374,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2;
 				PRODUCT_NAME = Macfusion;
 				SDKROOT = macosx;
-				VALID_ARCHS = "x86_64 i386";
 				WRAPPER_EXTENSION = app;
 			};
 			name = "Debug-Signed";
@@ -2485,7 +2517,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2;
 				PRODUCT_NAME = Macfusion;
 				SDKROOT = macosx;
-				VALID_ARCHS = "x86_64 i386";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -2517,7 +2548,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2;
 				PRODUCT_NAME = Macfusion;
 				SDKROOT = macosx;
-				VALID_ARCHS = "x86_64 i386";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2698,7 +2728,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = Debug;
 		};
@@ -2727,7 +2757,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2.MFCore;
 				PRODUCT_NAME = MFCore;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = Debug;
 		};
