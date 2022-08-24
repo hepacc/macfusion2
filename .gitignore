@@ -1,3 +1,6 @@
+#Sparkle.framework/
+
+
 # Exclude the build directory
 build/
 DerivedData/

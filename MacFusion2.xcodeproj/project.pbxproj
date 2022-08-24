@@ -1427,7 +1427,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo Fixing library path $CONFIGURATION_BUILD_DIR/PLUGIN_FOLDER_PATH/sshfs.mfplugin/Contents/MacOS/sshfs\ncd $TARGET_BUILD_DIR\ninstall_name_tool -change @executable_path/../Frameworks/MFCore.framework/Versions/A/MFCore ./../../../../Frameworks/MFCore.framework/Versions/A/MFCore sshfs.mfplugin/Contents/MacOS/sshfs";
+			shellScript = "echo Fixing library path $CONFIGURATION_BUILD_DIR/PLUGIN_FOLDER_PATH/sshfs.mfplugin/Contents/MacOS/sshfs\ncd $TARGET_BUILD_DIR\ninstall_name_tool -change @executable_path/../Frameworks/MFCore.framework/Versions/A/MFCore ./../../../../Frameworks/MFCore.framework/Versions/A/MFCore sshfs.mfplugin/Contents/MacOS/sshfs\n";
 		};
 		D47A75050E366E7600988669 /* Sign Code */ = {
 			isa = PBXShellScriptBuildPhase;
