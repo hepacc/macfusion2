@@ -1203,6 +1203,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D4DB42090D3E863200C99914 /* Build configuration list for PBXNativeTarget "MacfusionMain" */;
 			buildPhases = (
+				CEDDD3EF28B5CE2D00BBD0AB /* ShellScript */,
 				D4DB42000D3E863100C99914 /* Resources */,
 				D4DB42010D3E863100C99914 /* Sources */,
 				D4DB42020D3E863100C99914 /* Frameworks */,
@@ -1415,6 +1416,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "INFOPLIST=\"Resources/InfoPlist.h\"\nVERSION_MAY_CONTAIN_CHARS=1\nSEP=\"_\"\n\nif [ -e /opt/local/bin/git ]\nthen\nGIT=/opt/local/bin/git\nelse\nGIT=`which git`\nfi\n\n# CFBundleShortVersionString    x.y[.z]\n# CFBundleVersion               x.y.z-githash\n\n#Effectively, LS expects the following format: nnnnn[.nn[.nn]][X] where n is a digit 0-9,\n#square brackets indicate optional components, and X is any string not starting with a digit.\n#X is ignored when present.\n\ngithash=`$GIT log -1 --pretty=oneline --abbrev-commit |cut -c1-7`\nrevision=`$GIT log --oneline | wc -l |tr -d [[:space:]]`\n\n# if no tag, set x.y to 0.0\nif [ `$GIT describe --long 2>&1 |cut -c1-5` == \"fatal\" ]\nthen\nversion=0.0\ninternal_version=0.0.0${SEP}$githash\nelse\n# get tag and long tag name (w/o the githash)\nTAG=`$GIT describe --tags`\nTAGLONG=`$GIT describe --tags --long |sed \"s/-g${githash}//\"`\n\n# remove leading characters\nTAG=`echo $TAG |sed 's/[a-zA-Z]*//'`\nTAGLONG=`echo $TAGLONG |sed 's/[a-zA-Z]*//'`\n\n# get the number of commits since last tag\nTMP1=`expr \"$TAGLONG\" : '.*\\(-[0-9]*\\)'`\n\nif [ \"$TMP1\" == \"0\" ]\nthen\ncommits=0\nelse\ncommits=`echo $TMP1 |cut -c2-`\nfi\n\nif [ \"$VERSION_MAY_CONTAIN_CHARS\" == \"1\" ]\nthen\n# clean tag: remove number of commits and hash (if present), replace consecutive . with one ., remove trailing .\nTAG=`echo $TAG | sed 's/\\([0-9\\.]*\\)-[0-9]*-g[0-9a-f]\\{7\\}/\\1/' | sed 's/[\\.]\\{2,\\}/\\./g' | sed 's/\\.*$//'`\nelse\n# clean tag: remove anything after the version, replace consecutive . with one ., remove trailing .\nTAG=`echo $TAG | sed 's/\\([0-9\\.]*\\).*/\\1/' | sed 's/[\\.]\\{2,\\}/\\./g' | sed 's/\\.*$//'`\nfi\n# create version and internal_version\nversion=$TAG\n\nif [ \"$commits\" != \"0\" ] # if no commits since tagged, omit the zero in version\nthen\nversion=${TAG}.${commits}\nfi\n\ninternal_version=${TAG}.${commits}${SEP}${githash}\nfi\n\nif [ \"$1\" == \"-d\" ]\nthen\necho \"VERSION_INFO         : $version\"\necho \"INTERNAL_VERSION_INFO: $internal_version\"\necho \"GIT_HASH_INFO        : $githash\"\necho \"REVISION_INFO        : $revision\"\nexit\nfi\n\necho \"#define VERSION_INFO $version\" > $INFOPLIST\necho \"#define INTERNAL_VERSION_INFO $internal_version\" >> $INFOPLIST\necho \"#define GIT_HASH_INFO $githash\" >> $INFOPLIST\necho \"#define REVISION_INFO $revision\" >> $INFOPLIST\necho \"\" >> $INFOPLIST\necho \"#define VERSION \\\"$version\\\"\" >> $INFOPLIST\necho \"#define INTERNAL_VERSION \\\"$internal_version\\\"\" >> $INFOPLIST\necho \"#define GIT_HASH \\\"$githash\\\"\" >> $INFOPLIST\necho \"#define REVISION \\\"$revision\\\"\" >> $INFOPLIST\n";
+		};
+		CEDDD3EF28B5CE2D00BBD0AB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd Sparkle\nxcodebuild -scheme Sparkle -configuration Release CONFIGURATION_BUILD_DIR=./build clean build\ncp -a ./build/Sparkle.framework ../\n";
 		};
 		D41E209E0D886B6600F46F50 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
