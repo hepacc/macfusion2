@@ -1,3 +1,49 @@
+# Monterey & Apple Silicon(M1)/arm64 compatible Macfusion 2
+The original code of Macfusion 2 is bundled with pre-compiled binaries.
+This made it difficult to build apps for the successor new environments.
+Now these pre-complied binaries are wiped out and replacement binaries will be generated for your environment instead.
+
+- Sparkle.framework is included as submodule.
+- The plugins, SSHFS and FTPFS, are automatically built according to your environment.<br>
+(These source codes are not submoduled, because almost obsolete and require minor modifications.)
+    - SSHFS: v2.10 (mainstream is v3.x)
+    - FTPFS(curlftpfs): Last update in 2007, and some modification in 2014.<br>
+    (https://github.com/JackSlateur/curlftpfs)
+
+# Development Environment
+- MacBook Pro (2021, M1) + Monterey
+- MacBook Pro (2018, Intel) + Monterey
+
+# Build
+```
+$ git clone --recursive https://github.com/hepacc/macfusion2.git -b 2.1.1-dev3
+$ cd macfusion2
+$ xcodebuild -target All [-arch x86_64/arm64; recommended*]
+```
+Clone the `2.1.1-dev3` branch, it is based on the latest release.
+(Currently the master branch based one looks not work correctly.)
+After successful build, the `Macfusion.app` is placed below `macfusion2/Release`.
+I recommend to specify `-arch` option because of the limitation described below.
+
+# Limitations
+- Build binaries included in the plugins are not static-linked, but dynamically refer to external libraries; in my case, libraries below homebrew directory.
+The original version was bundled with static-linked binraies.
+- This means that even if the app itself (including Sparkle.framework) appears to be "univarsal", 
+the plugins are build environment specific (x86_64 or arm64),
+and will not work properly in the other environment.
+- FTPFS(curlftpfs) plugin is not tested (because I don't use it).<br>
+(Anonymous access looks OK, but user authentication DON'T.)
+
+<br>
+<br>
+The followings is the README.md in the original repository forked.
+
+---
+---
+---
+<br>
+<br>
+
 Macfusion 2
 ===========
 
