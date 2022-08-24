@@ -114,7 +114,6 @@
 		5029717F16562E1F007676B8 /* macfusionAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5029716A165628C5007676B8 /* macfusionAgent.m */; };
 		50BC2B61161837D1007E13BD /* off.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BC2B60161837D1007E13BD /* off.png */; };
 		50BC2B6416183A1B007E13BD /* on.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BC2B6316183A1B007E13BD /* on.png */; };
-		50F1E99016179E2300F94F9D /* sshfs-static-lions in Resources */ = {isa = PBXBuildFile; fileRef = 50F1E98D16179E2300F94F9D /* sshfs-static-lions */; };
 		D40235AE0D7E0176000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D402372E0D7E029E000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D40B04800D8C5EC30005F448 /* MGActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D40B047F0D8C5EC30005F448 /* MGActionButton.m */; };
@@ -1141,6 +1140,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D4B14BBA0CE03CC4003195A3 /* Build configuration list for PBXNativeTarget "sshfs" */;
 			buildPhases = (
+				CE133B4C28B6176C0099F2C2 /* ShellScript */,
 				D4B14BB20CE03CC3003195A3 /* Resources */,
 				D4B14BB30CE03CC3003195A3 /* Sources */,
 				D4B14BB40CE03CC3003195A3 /* Frameworks */,
@@ -1205,6 +1205,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D4E6D80D0D9372640022763F /* Build configuration list for PBXNativeTarget "ftpfs" */;
 			buildPhases = (
+				CE133B4D28B61BFB0099F2C2 /* ShellScript */,
 				D4E6D8050D9372640022763F /* Resources */,
 				D4E6D8060D9372640022763F /* Sources */,
 				D4E6D8070D9372640022763F /* Frameworks */,
@@ -1330,7 +1331,6 @@
 				D4656C8E0D6FD6DC00DE2208 /* sshfs.png in Resources */,
 				D41316320D7F740400F55B9B /* sshfsAdvanced.xib in Resources */,
 				D41E17DF0D86040B00F46F50 /* new_sshfs_askpass in Resources */,
-				50F1E99016179E2300F94F9D /* sshfs-static-lions in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1381,7 +1381,41 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /usr/bin/perl;
-			shellScript = "# Script found in http://rossfranklin.blogspot.mx/2012/07/automatically-add-git-hash-to-infoplist.html\n# Wrote by Ross Franklin\n# Minor modifications by Yoshiki Vazquez Baeza\n\nuse strict;\nuse warnings;\n\ndie \"$0: Must be run from Xcode\" unless $ENV{\"BUILT_PRODUCTS_DIR\"};\n\nmy $FH;\nmy $output;\n\n# SHA hash (should only return the first 7 characters of the hash) :\nopen $FH, \"xcrun git rev-parse --short HEAD|\" or die;\n$output = <$FH>;\nclose($FH);\n\nchomp( $output );\nmy $gitSHA = $output;\n\n# clean state :\n\n$output = `xcrun git status`;\n\nmy $gitStatus;\nif ( index( $output, \"nothing to commit (working directory clean)\" ) != -1 ) {\n    $gitStatus = \"clean\";\n} else {\n    $gitStatus = \"dirty\";\n}\n\nprint \"gitSHA : $gitSHA\\n\";\nprint \"gitStatus : $gitStatus\";\n\n# Update Info.plist in build product. Use defaults command\n#my $INFO = \"$ENV{BUILT_PRODUCTS_DIR}/$ENV{WRAPPER_NAME}/Info\"; #iOS\nmy $INFO = \"$ENV{BUILT_PRODUCTS_DIR}/$ENV{WRAPPER_NAME}/Contents/Info\"; #OSX\n\nmy @defaults = ( 'defaults', 'write', $INFO, 'GitSHA', \"$gitSHA\" );\nsystem( @defaults );\n\n@defaults = ( 'defaults', 'write', $INFO, 'GitStatus', \"$gitStatus\" );\nsystem( @defaults );";
+			shellScript = "# Script found in http://rossfranklin.blogspot.mx/2012/07/automatically-add-git-hash-to-infoplist.html\n# Wrote by Ross Franklin\n# Minor modifications by Yoshiki Vazquez Baeza\n\nuse strict;\nuse warnings;\n\ndie \"$0: Must be run from Xcode\" unless $ENV{\"BUILT_PRODUCTS_DIR\"};\n\nmy $FH;\nmy $output;\n\n# SHA hash (should only return the first 7 characters of the hash) :\nopen $FH, \"xcrun git rev-parse --short HEAD|\" or die;\n$output = <$FH>;\nclose($FH);\n\nchomp( $output );\nmy $gitSHA = $output;\n\n# clean state :\n\n$output = `xcrun git status`;\n\nmy $gitStatus;\nif ( index( $output, \"nothing to commit (working directory clean)\" ) != -1 ) {\n    $gitStatus = \"clean\";\n} else {\n    $gitStatus = \"dirty\";\n}\n\nprint \"gitSHA : $gitSHA\\n\";\nprint \"gitStatus : $gitStatus\";\n\n# Update Info.plist in build product. Use defaults command\n#my $INFO = \"$ENV{BUILT_PRODUCTS_DIR}/$ENV{WRAPPER_NAME}/Info\"; #iOS\nmy $INFO = \"$ENV{BUILT_PRODUCTS_DIR}/$ENV{WRAPPER_NAME}/Contents/Info\"; #OSX\n\nmy @defaults = ( 'defaults', 'write', $INFO, 'GitSHA', \"$gitSHA\" );\nsystem( @defaults );\n\n@defaults = ( 'defaults', 'write', $INFO, 'GitStatus', \"$gitStatus\" );\nsystem( @defaults );\n";
+		};
+		CE133B4C28B6176C0099F2C2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd sshfs-2.10\n./configure\nmake -j 10\ncp -a sshfs ../SSHFS/sshfs-static\n\n";
+		};
+		CE133B4D28B61BFB0099F2C2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd curlftpfs\n./configure\nmake -j 10\ncp -a curlftpfs ../FTPFS/curlftpfs_static_mg\n\n";
 		};
 		CEDDD3EF28B5CE2D00BBD0AB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1398,7 +1432,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd Sparkle\nxcodebuild -scheme Sparkle -configuration Release CONFIGURATION_BUILD_DIR=./build clean build\ncp -a ./build/Sparkle.framework ../\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nrm -rf Sparkle.framework\ncd Sparkle\nxcodebuild -scheme Sparkle -configuration Release CONFIGURATION_BUILD_DIR=./build clean build\ncp -a ./build/Sparkle.framework ../\n";
 		};
 		D41E209E0D886B6600F46F50 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1411,7 +1445,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo Fixing library path $CONFIGURATION_BUILD_DIR/PLUGIN_FOLDER_PATH/sshfs.mfplugin/Contents/MacOS/sshfs\ncd $TARGET_BUILD_DIR\ninstall_name_tool -change @executable_path/../Frameworks/MFCore.framework/Versions/A/MFCore ./../../../../Frameworks/MFCore.framework/Versions/A/MFCore sshfs.mfplugin/Contents/MacOS/sshfs";
+			shellScript = "echo Fixing library path $CONFIGURATION_BUILD_DIR/PLUGIN_FOLDER_PATH/sshfs.mfplugin/Contents/MacOS/sshfs\ncd $TARGET_BUILD_DIR\ninstall_name_tool -change @executable_path/../Frameworks/MFCore.framework/Versions/A/MFCore ./../../../../Frameworks/MFCore.framework/Versions/A/MFCore sshfs.mfplugin/Contents/MacOS/sshfs\n";
 		};
 		D47A75050E366E7600988669 /* Sign Code */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1425,7 +1459,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${CONFIGURATION} == \"Debug-Signed\" || ${CONFIGURATION} == \"Release-Signed\" ]]\nthen\n\t# -f means force to re-sign even if already signed\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/Resources/macfusionAgent.app\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/Resources/MacfusionMenuling.app\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/PlugIns/sshfs.mfplugin/Contents/Resources/new_sshfs_askpass\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/PlugIns/ftpfs.mfplugin/Contents/Resources/ftpfs_askpass\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/PlugIns/ftpfs.mfplugin/Contents/Resources/ftpfs_askpass\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/Frameworks/MFCore.framework/Versions/A\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/\"\nfi";
+			shellScript = "if [[ ${CONFIGURATION} == \"Debug-Signed\" || ${CONFIGURATION} == \"Release-Signed\" ]]\nthen\n\t# -f means force to re-sign even if already signed\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/Resources/macfusionAgent.app\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/Resources/MacfusionMenuling.app\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/PlugIns/sshfs.mfplugin/Contents/Resources/new_sshfs_askpass\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/PlugIns/ftpfs.mfplugin/Contents/Resources/ftpfs_askpass\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/PlugIns/ftpfs.mfplugin/Contents/Resources/ftpfs_askpass\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Contents/Frameworks/MFCore.framework/Versions/A\"\n\tcodesign -vvv -f -s \"Michael Gorbach (Software)\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1665,7 +1699,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = Release;
 		};
@@ -1763,7 +1797,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2.MFCore;
 				PRODUCT_NAME = MFCore;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1792,7 +1825,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = "Release-Signed";
 		};
@@ -1822,7 +1855,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2.MFCore;
 				PRODUCT_NAME = MFCore;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
 				ZERO_LINK = NO;
 			};
 			name = "Release-Signed";
@@ -2023,7 +2055,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2;
 				PRODUCT_NAME = Macfusion;
 				SDKROOT = macosx;
-				VALID_ARCHS = "x86_64 i386";
+				VALID_ARCHS = "x86_64 arm64";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -2076,7 +2108,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = "Debug-Signed";
 		};
@@ -2106,7 +2138,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2.MFCore;
 				PRODUCT_NAME = MFCore;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
 				ZERO_LINK = NO;
 			};
 			name = "Debug-Signed";
@@ -2307,7 +2338,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2;
 				PRODUCT_NAME = Macfusion;
 				SDKROOT = macosx;
-				VALID_ARCHS = "x86_64 i386";
+				VALID_ARCHS = "x86_64 arm64";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -2461,7 +2492,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2;
 				PRODUCT_NAME = Macfusion;
 				SDKROOT = macosx;
-				VALID_ARCHS = "x86_64 i386";
+				VALID_ARCHS = "x86_64 arm64";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -2494,7 +2525,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2;
 				PRODUCT_NAME = Macfusion;
 				SDKROOT = macosx;
-				VALID_ARCHS = "x86_64 i386";
+				VALID_ARCHS = "x86_64 arm64";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -2684,7 +2715,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
+				VALID_ARCHS = "x86_64 arm64";
 			};
 			name = Debug;
 		};
@@ -2714,7 +2745,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.mgorbach.macfusion2.MFCore;
 				PRODUCT_NAME = MFCore;
 				SDKROOT = macosx;
-				VALID_ARCHS = x86_64;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
