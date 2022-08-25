@@ -129,6 +129,8 @@
 		5029717F16562E1F007676B8 /* macfusionAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5029716A165628C5007676B8 /* macfusionAgent.m */; };
 		50BC2B61161837D1007E13BD /* off.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BC2B60161837D1007E13BD /* off.png */; };
 		50BC2B6416183A1B007E13BD /* on.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BC2B6316183A1B007E13BD /* on.png */; };
+		CE0BA64628B756B30032BF66 /* sshfs in Resources */ = {isa = PBXBuildFile; fileRef = CE0BA64528B756B30032BF66 /* sshfs */; };
+		CE0BA64828B756CA0032BF66 /* curlftpfs in Resources */ = {isa = PBXBuildFile; fileRef = CE0BA64728B756CA0032BF66 /* curlftpfs */; };
 		D40235AE0D7E0176000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D402372E0D7E029E000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D40B04800D8C5EC30005F448 /* MGActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D40B047F0D8C5EC30005F448 /* MGActionButton.m */; };
@@ -464,6 +466,8 @@
 		50BC2B60161837D1007E13BD /* off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = off.png; sourceTree = "<group>"; };
 		50BC2B6316183A1B007E13BD /* on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = on.png; sourceTree = "<group>"; };
 		50F1E98D16179E2300F94F9D /* sshfs-static-lions */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "sshfs-static-lions"; sourceTree = "<group>"; };
+		CE0BA64528B756B30032BF66 /* sshfs */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = sshfs; path = SSHFS/sshfs; sourceTree = "<group>"; };
+		CE0BA64728B756CA0032BF66 /* curlftpfs */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = curlftpfs; path = curlftpfs/curlftpfs; sourceTree = "<group>"; };
 		D40235AD0D7E0176000B9B64 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		D40B047E0D8C5EC30005F448 /* MGActionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGActionButton.h; sourceTree = "<group>"; };
 		D40B047F0D8C5EC30005F448 /* MGActionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGActionButton.m; sourceTree = "<group>"; };
@@ -630,6 +634,8 @@
 		08FB7794FE84155DC02AAC07 /* macfusiond */ = {
 			isa = PBXGroup;
 			children = (
+				CE0BA64728B756CA0032BF66 /* curlftpfs */,
+				CE0BA64528B756B30032BF66 /* sshfs */,
 				D4386C060D0B46CF0078C19F /* Resources */,
 				D4B14EE00CE24671003195A3 /* Shared */,
 				D4E5200C0CE03B82009B1A30 /* Server */,
@@ -1356,6 +1362,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE0BA64628B756B30032BF66 /* sshfs in Resources */,
 				D4B14BCB0CE03D25003195A3 /* sshfs-static in Resources */,
 				0682C04D1DB6D81D008BFF9D /* sshfs-static-legacy in Resources */,
 				D439D6D60D0A0FDE0025574A /* sshfsConfiguration.xib in Resources */,
@@ -1383,6 +1390,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE0BA64828B756CA0032BF66 /* curlftpfs in Resources */,
 				D4E6DB050D93928F0022763F /* ftpfs_askpass in Resources */,
 				0682C04C1DB6D811008BFF9D /* curlftpfs-static-legacy in Resources */,
 				D4E6D8280D9373130022763F /* ftpfs_icon.icns in Resources */,
@@ -1432,7 +1440,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd sshfs-2.10\n./configure\nmake -j 10\ncp -a sshfs ../SSHFS/sshfs-static\n\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd sshfs-2.10\n./configure\nmake -j 10\ncp -a sshfs ../SSHFS/sshfs\n\n";
 		};
 		CED8BB9928B64E7000714CD2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1449,7 +1457,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd curlftpfs\n./configure\nmake -j 10\ncp -a curlftpfs ../FTPFS/curlftpfs-static\n\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd curlftpfs\n./configure\nmake -j 10\ncp -a curlftpfs ../FTPFS/curlftpfs\n\n";
 		};
 		CEDDD3EF28B5CE2D00BBD0AB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

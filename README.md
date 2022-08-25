@@ -16,12 +16,12 @@ Now these pre-complied binaries are wiped out and replacement binaries will be g
 
 # Build
 ```
-$ git clone --recursive https://github.com/hepacc/macfusion2.git -b 2.1.1-dev3
+$ git clone --recursive https://github.com/hepacc/macfusion2.git
 $ cd macfusion2
 $ xcodebuild -target All [-arch x86_64/arm64; recommended*]
 ```
-Clone the `2.1.1-dev3` branch, it is based on the latest release.
-(Currently the master branch based one looks not work correctly.)
+~~Clone the `2.1.1-dev3` branch, it is based on the latest release.~~
+~~(Currently the master branch based one looks not work correctly.)~~
 After successful build, the `Macfusion.app` is placed below `macfusion2/Release`.
 I recommend to specify `-arch` option because of the limitation described below.
 

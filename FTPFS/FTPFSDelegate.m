@@ -43,7 +43,10 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 
 	// This shouldn't be necessary, but helps to safeguard, if people were to compile for OS X < 10.9
 	// This check can hopefully removed in the future
-	if (OSmajor == 10 && OSminor >= 9) {
+    if (OSmajor >= 11){
+        // Use the binary built by yourself
+        return [[NSBundle bundleForClass:[self class]] pathForResource:@"curlftpfs" ofType:nil inDirectory:nil];
+    }else if (OSmajor == 10 && OSminor >= 9) {
 		// Yes, use the latest and greatest code (no MacFuse compat layer needed)
 		return [[NSBundle bundleForClass:[self class]] pathForResource:@"curlftpfs-static" ofType:nil inDirectory:nil];
 	} else {
